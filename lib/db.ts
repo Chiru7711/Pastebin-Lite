@@ -28,7 +28,7 @@ export async function getPaste(id: string): Promise<Paste | null> {
   
   if (useKV) {
     try {
-      const result = await kv.get(`paste:${id}`) as Paste | null
+      const result: Paste | null = await kv.get(`paste:${id}`)
       console.log('KV get result:', result ? 'found' : 'not found')
       return result
     } catch (error) {
