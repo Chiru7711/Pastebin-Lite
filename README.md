@@ -2,6 +2,8 @@
 
 A simple web app where you can paste text and share it with others. Think of it like a digital sticky note that you can send to anyone!
 
+🚀 **Live Demo:** [https://pastebin-lite-delta-ashen.vercel.app/](https://pastebin-lite-delta-ashen.vercel.app/)
+
 ## What Does It Do?
 
 **Create & Share Text:**
@@ -26,11 +28,11 @@ A simple web app where you can paste text and share it with others. Think of it 
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Web Browser   │    │   Next.js App   │    │  Vercel KV      │
-│                 │    │                 │    │  (Redis)        │
-│  - Create Form  │◄──►│  - API Routes   │◄──►│                 │
-│  - View Paste   │    │  - HTML Pages   │    │  - Store Pastes │
-│  - Share Links  │    │  - View Counter │    │  - Atomic Ops   │
+│   Web Browser   │    │   Next.js App   │    │  Redis Database │
+│                 │    │                 │    │                 │
+│  - Create Form  │◄──►│  - API Routes   │◄──►│  - Store Pastes │
+│  - View Paste   │    │  - HTML Pages   │    │  - Atomic Ops   │
+│  - Share Links  │    │  - View Counter │    │  - Persistence  │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
@@ -70,7 +72,7 @@ A simple web app where you can paste text and share it with others. Think of it 
 
 ## How It Works Behind the Scenes
 
-**Database:** Uses Vercel KV (Redis) for fast, reliable storage that works on cloud platforms
+**Database:** Uses Redis for fast, reliable storage with atomic operations and persistence
 
 **Smart Features:**
 - **Atomic View Counting**: Prevents race conditions when multiple people view simultaneously
@@ -81,8 +83,8 @@ A simple web app where you can paste text and share it with others. Think of it 
 ## Tech Stack
 - **Frontend**: Next.js with React (simple, clean interface)
 - **Backend**: Next.js API routes (handles all the logic)
-- **Database**: Vercel KV/Redis (fast, atomic operations)
-- **Deployment**: Designed for Vercel (but works anywhere)
+- **Database**: Redis (fast, atomic operations, persistence)
+- **Deployment**: Vercel (serverless, auto-scaling)
 
 ## API Endpoints
 
