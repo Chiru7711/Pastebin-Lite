@@ -7,7 +7,7 @@ const memoryStore = new Map<string, any>()
 const useKV = process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
 
 export async function storePaste(id: string, paste: Paste): Promise<void> {
-  console.log('Storing paste:', id, 'useKV:', useKV)
+  console.log('Storing paste:', id, 'useKV:', useKV, 'ENV check:', !!process.env.KV_REST_API_URL)
   
   if (useKV) {
     try {
