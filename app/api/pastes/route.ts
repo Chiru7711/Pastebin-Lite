@@ -45,7 +45,15 @@ export async function POST(req: NextRequest) {
       views: 0
     }
     
-    await storePaste(id, paste)
+    try {
+      await storePaste(id, paste)
+    } catch (dbError) {
+      console.error('Database error:', dbError)
+      return NextResponse.json(
+        { error: 'Database connection failed' },
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
     
     const url = `${req.nextUrl.origin}/p/${id}`
     
@@ -54,8 +62,9 @@ export async function POST(req: NextRequest) {
       { headers: { 'Content-Type': 'application/json' } }
     )
   } catch (error) {
+    console.error('API error:', error)
     return NextResponse.json(
-      { error: 'Invalid JSON' },
+      { error: 'Invalid JSON or server error' },
       { status: 400, headers: { 'Content-Type': 'application/json' } }
     )
   }
