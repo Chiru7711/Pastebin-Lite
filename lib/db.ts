@@ -1,20 +1,25 @@
-import { kv } from '@vercel/kv'
+import Redis from 'ioredis'
 import { Paste } from './utils'
 
 // In-memory fallback for local development
 const memoryStore = new Map<string, any>()
 
-const useKV = process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
+const redisUrl = process.env.REDIS_URL
+let redis: Redis | null = null
+
+if (redisUrl) {
+  redis = new Redis(redisUrl)
+}
 
 export async function storePaste(id: string, paste: Paste): Promise<void> {
-  console.log('Storing paste:', id, 'useKV:', useKV, 'ENV check:', !!process.env.KV_REST_API_URL)
+  console.log('Storing paste:', id, 'useRedis:', !!redis)
   
-  if (useKV) {
+  if (redis) {
     try {
-      await kv.set(`paste:${id}`, paste)
-      console.log('Successfully stored in KV:', id)
+      await redis.set(`paste:${id}`, JSON.stringify(paste))
+      console.log('Successfully stored in Redis:', id)
     } catch (error) {
-      console.error('KV storage failed:', error)
+      console.error('Redis storage failed:', error)
       throw error
     }
   } else {
@@ -24,15 +29,20 @@ export async function storePaste(id: string, paste: Paste): Promise<void> {
 }
 
 export async function getPaste(id: string): Promise<Paste | null> {
-  console.log('Getting paste:', id, 'useKV:', useKV)
+  console.log('Getting paste:', id, 'useRedis:', !!redis)
   
-  if (useKV) {
+  if (redis) {
     try {
-      const result: Paste | null = await kv.get(`paste:${id}`)
-      console.log('KV get result:', result ? 'found' : 'not found')
-      return result
+      const result = await redis.get(`paste:${id}`)
+      if (result) {
+        const paste = JSON.parse(result) as Paste
+        console.log('Redis get result: found')
+        return paste
+      }
+      console.log('Redis get result: not found')
+      return null
     } catch (error) {
-      console.error('KV get failed:', error)
+      console.error('Redis get failed:', error)
       return null
     }
   } else {
@@ -56,12 +66,12 @@ export async function incrementViews(id: string): Promise<number> {
 }
 
 export async function healthCheck(): Promise<boolean> {
-  if (useKV) {
+  if (redis) {
     try {
-      await kv.ping()
+      await redis.ping()
       return true
     } catch (error) {
-      console.error('KV health check failed:', error)
+      console.error('Redis health check failed:', error)
       return false
     }
   } else {
